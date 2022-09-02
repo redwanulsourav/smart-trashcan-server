@@ -10,12 +10,13 @@ from io import BytesIO
 import base64
 import cv2
 import numpy as np
-
+import trash_classification
 
 received_messages = queue.Queue()
 sending_messages = queue.Queue()
 
 greeting_agent = greeting_helper.GreetingHelper()
+trash_classify_agent = trash_classification.TrashClassify()
 
 def server_send():
     s = socket.socket()
@@ -110,7 +111,8 @@ def process():
     global received_messages
     global sending_messages
     global greeting_agent
-
+    global trash_classify_agent
+    
     lock = Lock()
     lock.acquire()
     print("process started")
@@ -147,6 +149,29 @@ def process():
                 response_message = {
                     'type' : 'FACE_RECOGNITION_RESPONSE',
                     'name' : name
+                }
+
+                response_message_str = '^' + json.dumps(response_message) + '$'
+                sending_messages.put(response_message_str)
+            elif message["type"] == 'SAVE_FACE_SERVICE':
+                imgdata = base64.b64decode(message["data"])
+                jpg_as_np = np.frombuffer(imgdata, dtype=np.uint8)
+                img = cv2.imdecode(jpg_as_np, flags=1)
+
+                name = message["name"]
+
+                greeting_agent.save_face(img, name)
+            elif message["type"] == 'TRASH_CLASSIFY_SERVICE':
+                
+                imgdata = base64.b64decode(message["data"])
+                jpg_as_np = np.frombuffer(imgdata, dtype=np.uint8)
+                img = cv2.imdecode(jpg_as_np, flags=1)
+
+                trash_type = trash_classify_agent.classify_trash(img)
+
+                response_message = {
+                    'type' : 'TRASH_CLASSIFY_RESULT',
+                    'result': str(trash_type)
                 }
 
                 response_message_str = '^' + json.dumps(response_message) + '$'
