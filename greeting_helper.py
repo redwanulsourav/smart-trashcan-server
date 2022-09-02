@@ -3,9 +3,9 @@ import face_recognition
 
 class GreetingHelper:
     def __init__(self):
-        pass
+        self.face_database = db_interface.Dataset()
     
-    def face_recognition(img):
+    def face_recognition(self, face_crop):
         """
             Parameters: face_crop - OpenCV BGR image.
             Returns: Name of recognized face or Unknown.
@@ -23,11 +23,11 @@ class GreetingHelper:
 
         name = 'Unknown'
         
-        matches = face_recognition.compare_faces(dataset.known_face_encodings(), face_crop_encoding)
+        matches = face_recognition.compare_faces(self.face_database.known_face_encodings(), face_crop_encoding)
         
         if True in matches:
             first_match_index = matches.index(True)
-            name = dataset.get_face_name_idx(first_match_index)
+            name = self.face_database.get_face_name_idx(first_match_index)
         
         return name
     

@@ -1,4 +1,5 @@
 import face_recognition
+import os
 
 class Dataset:
     def __init__(self):
@@ -12,7 +13,7 @@ class Dataset:
         face_dirs = os.listdir('face-dataset/')
 
         for single_face in face_dirs:
-            img_path = f'face-dataset/{single_face}/0.jpg'
+            img_path = f'face-dataset/{single_face}/face.jpg'
             face_name = f'face-dataset/{single_face}/name.txt'
 
             # Extract name
@@ -31,11 +32,11 @@ class Dataset:
 
     
     def known_face_encodings(self):
-        return self.face_encodings()
+        return self.face_encodings
     
     def get_face_name_idx(self, idx):
-        if idx < len(face_names) and idx >= 0:
-            return self.face_name[idx]
+        if idx < len(self.face_names) and idx >= 0:
+            return self.face_names[idx]
         
 
     
