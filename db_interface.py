@@ -23,8 +23,10 @@ class Dataset:
             # contents = f.read()
             # f.close()
 
-            # Clean up the contents.
-            name = faces[int(single_face[:-4])].strip()
+            # Clean up the contents
+            image_index = os.path.splitext(single_face)[0]
+            image_index = int(image_index)
+            name = faces[image_index].strip()
 
             img = face_recognition.load_image_file(img_path)
             encoding = face_recognition.face_encodings(img)[0]
