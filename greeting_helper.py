@@ -38,13 +38,17 @@ class GreetingHelper:
             face_files = os.listdir('face-dataset')
             count = len(face_files)
 
-            os.mkdir(f'face-dataset/{count}/')
+            #os.mkdir(f'face-dataset/{count}/')
 
-            cv2.imwrite(f'face-dataset/{count}/face.jpg', img)
-            
-            f = open(f'face-dataset/{count}/name.txt', 'w')
-            f.write(name)
+            cv2.imwrite(f'face-dataset/{count}.jpg', img)
+
+            f = open('list.txt', 'a')
+            f.write(f'{name},')
             f.close()
+            db_interface.Dataset.refresh_db(f'face-dataset/{count}.jpg', name)
+            # f = open(f'face-dataset/{count}/name.txt', 'w')
+            # f.write(name)
+            # f.close()
         except Exception as e:
             print(e)
 
